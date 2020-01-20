@@ -3,5 +3,8 @@ ReplicationController
 ReplicaSet
 Deployment
 Service
+  - ClusterIP
+  - NodePort
+  - LoadBalancer
 ConfigMaps
 Secrets
