@@ -1,0 +1,11 @@
+###basic syntax for pod design
+
+apiVersion: v1
+kind: Pod
+metadata:
+  label:
+    name:  naginx
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
