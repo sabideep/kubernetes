@@ -1,1 +1,42 @@
-#updates and rollback
+#deployments
+#updates and rollback is managed by deployment
+#you can create multiple replicas
+#scale out and scale in( horizontal pod scaler)
+#Pause and Resume
+
+# Create deployment manifest file
+
+#controllers/nginx-deployment.yaml 
+
+
+###Commands
+# kubectl create -f Deployment.yaml
+#kubectl get deployment -l app=nginx
+#kubectl get rs  -l app=nginx
+#kubectl get pods -l app=nginx
+#kubectl describe deploy nginx-deployment
+#kubectl set to update the deployment
+#kubectl edit
+#kubectl rollout status $deploymentName
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
