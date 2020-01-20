@@ -1,4 +1,7 @@
 ###basic syntax for pod design
+#commands:
+# kubctl create -f pod.yaml
+#kubectl delete -f  pod.yaml
 
 apiVersion: v1
 kind: Pod
