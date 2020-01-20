@@ -8,3 +8,7 @@ Service
   - LoadBalancer
 ConfigMaps
 Secrets
+StorageClass
+PV
+PVC
+Jobs
