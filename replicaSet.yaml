@@ -1,0 +1,33 @@
+#replicaSet controllers/replicaSet.yaml 
+
+####
+#commands
+# kubectl create -f  replicaSet.yaml
+#kubectl get pods
+#kubectl get pods -l tier=frontend
+#kubectl describe rs nginx
+#kubectl scale rs nginx --replicas=5
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+    tier: frontend
+spec:
+  # modify replicas according to your case
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
