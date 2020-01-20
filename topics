@@ -1,5 +1,7 @@
-pod
-deployments
-service
-configMaps
+Pod
+ReplicationController
+ReplicaSet
+Deployment
+Service
+ConfigMaps
 Secrets
