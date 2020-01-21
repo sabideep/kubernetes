@@ -1,0 +1,54 @@
+#cluster_setup
+#Get the Docker gpg, and add it to your repository.
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+#Get the Kubernetes gpg key, and add it to your repository.
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+cat << EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+sudo apt-get update
+
+#Install Docker, kubelet, kubeadm, and kubectl
+sudo apt-get install -y docker-ce=18.06.1~ce~3-0~ubuntu kubelet=1.13.5-00 kubeadm=1.13.5-00 kubectl=1.13.5-00
+
+
+#Initialize the Kubernetes cluster in master only
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+
+#Set up local kubeconfig
+mkdir -p $HOME/.kube
+
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+#Apply the flannel CNI plugin as a network overlay.
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+
+
+#Join the worker nodes to the cluster, and verify they have joined successfully.
+sudo kubeadm join 'KUBERNETES_MASTER_IP':6443 --token 'UNIQUE_TOKEN' --discovery-token-ca-cert-hash sha256:'UNIQUE_HASH'
+# kubeadm join 10.0.1.53:6443 --token 1ors41.vkaku8pr829i4be0 --discovery-token-ca-cert-hash sha256:2ea526734f17b38fb50ba90b02c168972ccc340fafd7b736a873b6ba44628d96"
+
+
+#############################################################################################
+# upgrade the kubernetes cluster
+
+kubectl version --short
+kubeadm upgrade plan
+upgrade kubeadm, kubelet, kubectl
+
+
+###upgrade worker node###
+1. Firstdrain the pods from he worker node and move the pod to healthy node
+2. Pod eviction timedout setby controller manager, pods will be terminated after 5min by default.
+
+##backup and restore the cluster
+Take a snpshot with etcdctl
