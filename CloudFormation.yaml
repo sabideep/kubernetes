@@ -1,0 +1,135 @@
+AWS
+Ansible
+Kubernetes
+Prometheus
+Splunk
+Docker
+Jenkins
+Python
+Shell Scripting
+Terraform
+Cloudformation
+Git
+Maven
+Azure
+GCP
+
+
+
+On demand and scale easily
+Cloudformation: Declaratively way of outlining AWS Infrastructure
+Cloudformation will create resources in right order with exact configuration you specify.
+Create, Update and Delete resources as a code
+
+Benefits:
+  Infrastructure as Code:
+  - No Resources are created manually. Very good for control creation
+  - The code cane be version controlled
+  - Changes in the Infrastructure can be revied thru Code
+  Cost:
+  - Each resource within a stack is tagged with identifier, so you can track the cost per stack
+  - You can estimate the cost of your Infrastructure
+  - Savings strategy: Delete dev after hours and creates them in the morning on demand safely
+  Productivity:
+  - Abiltiy to create, destroy and re-create the infrastruce on the fly
+  - Automated generation of Diagram form Designer
+  - Declarative programming
+  Separations of concern:
+  - Create VPC stacks, Network stacks, App Stacks separately
+
+  SUMMARY:
+    - All templates have to be uploaded to s3 and then reference in Cloudformation
+    - We cannot edit the template, we need to upload new version.
+    - Stacks name cannot be changed once created
+    - Deleting stacks will delete all the resources it created.
+When Updating template: Verify if Replacement is True or False
+
+
+Parameters: A way to provide inputs to your AWS template. Max 60.
+           If you want to use your template across multiple team.
+when we need: Is your cloudformation resource likely to change in the future then yes.
+How to Reference: Fn::Ref==!Ref -->shorthand in YAML. It can reference from template as well as Parameters
+
+Resources: Aws will determine the dependency of resources and creates them in order.
+           DependsOn, DeletionPolicy, CreationPolicy, Metadata
+
+Mappings: Fixed key/val variables in Cloudformation Templates.
+          Handy to differentiate AMI types, env(dev or prod), Regions etc. All the values are hardcoded within the template
+When to Use: When you know in advance all the values for variables, line your env, regions or AMIs.
+             Parameters are used for user specific configuration.
+How to Reference: Fn::FindInMap==!FindInMap[MapName, TopLevelKey, SecodnLevelKey] -->shorthand in Yaml (Fn-->!)
+Pseudo Parameters: default parameters offered by AWS.
+
+Outputs: The values that can be referenced in other stacks. Values can be viewd in AWS Console as wells with AWS-cli.
+    eg. Create a stack for for VPC and reference vpcId and other Network component in other stack.
+        This way you can collaborate with diffent teams with respect to the expertise in AWS.
+        Export: key word to use in output block to be re-usable in other stacks.
+        Fn::ImportValue==!ImportValue: Used in destination stack to import from source stack.
+        If stack referenced by other stack, it cannot be deleted.
+
+Conditions: Control creation of resource or outputs based on the condition defined.
+      Logical operator: Fn::And, Fn::Equals, Fn::Or, Fn::If
+      Fn::GetAtt --> Attributes are attched to any resources that cloudformation created and can be used to get Attributes.
+
+Cloudformation init and EC2 user data:
+  UserData:
+    Fn::Base64:
+Cloudformation helper Scripts: 4 types of scripts. FLOW: cfn-init --> cnf-signal -->cfn-hup
+    cfn-init: intalling packages, creating files and starting services
+        AWS::CloudFormation::Init:
+          config:
+    Fn::Sub==!Sub -->replace the variables with value in CloudFormation
+    cfn-signal: signals cloudformation CreationPolicy or WaitCondition
+    cfn-get-metadata: retrieve all metadata defined in cloudformation
+    cfn-hup: a daemon to check updates to metadata
+
+
+How cfn-init and cfn-signal works in cloudformation Template ?
+1. Use cfn-init first to launch the configuration
+2. Then use cfn-signal to let cloudformation know that the resource has been created.
+3. This has to be used in conjuction of a CreationPolicy
+4. cfn-hup can be used to tell your EC2 instance to look for Metadata changes every 15 min and apply metadata configuration again
+
+User-data vs cfn-init?
+User-data is imerative way to provision/bootstrap using SHELL syntax
+cfn-init is declarative way to provision/bootstrap. cfn-init inside UserData is triggered by cfn-signal helper scripts.
+
+
+CloudFormation Drift:
+  It will detect the drift in the resoucres that were created from the current stack
+
+
+Nested Stakcs:
+  - Nested stacks are stacks as part of other Stacks
+  - it allows to isolate repeated patterns and components and call from other stack.
+  - always update the parent/root stack if update is done
+  TemplateUrl: url of yaml file uploaded in S3.
+
+Update Nested Stacks:
+  - upload new version of nested template in S3
+  - Then, re-upload the root stack.
+Delete Nested Stacks:
+  - Delete the root stack and it will delete all the nested stacks.
+
+troposphere:
+  - Uses python to generate cloudformation template.
+
+CloudFormer(Former2):
+  - Generate cloudformation template from the AWS resources
+
+DeletionPolicy:
+  - with this, you can prevent resources from being deleted or take a backup before delete.
+  Values: Delete, Retain, Snapshot.
+
+Best Practices:
+  - Layered(horizontal layer) --> Network, Instance Layer, Application Layer
+  or service oriented(vertical) layer.
+  - Cross stack reference is recommneded
+  - Template should be  environment agnostics and region agnostics
+  - No Credential in templates
+  - parameter -> use type and constrain in this section
+  - Verify change and changeset
+  - Use DeletionPolicy
+Cost Estimation:
+  - upload the stack to CloudFormation
+  - Click Cost in Review section to get the cost Estimation.
