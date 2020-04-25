@@ -1,0 +1,32 @@
+Labels
+selectors
+Annotations
+
+
+
+labels: labels are key-value pairs attached to Kubernetes objects. We can attach labels @metadata.lables
+   labels:
+     app: myappName
+     environment: dev
+
+Selectors: It is used to identifying and selecting specific groups of objects based on labels.
+
+Annotations: They are similar to labels(key val) and they can  be used to store custom data about object. They cannot be used with Selectors.
+
+
+Deployment: It provides a way to declaratively managed the dynamics set of replica pods.
+           It defines the desired state for replica pods and cluster will constantly maintain the desired state by creating, removing and modifing the pods.
+
+
+POD: it is a building blocks of any applications in Kubernetes.
+     A pod consists of  one or more containers  and set of resources shared by containers.
+     objecttype: Pod
+     crete yaml definition for objects
+
+Services: It creates abstraction layer for the network access to the dynamic sets of PODS. The services uses SELCTOR to determine which pods will receive traffic thru the service.
+        First create deployment with selector.
+        Create service with the same selctor.
+        clusterIP: The cluster is exposed  within the cluster using an internal IP address.
+        NodePort:  the serivice is exposed  externally via  a port  which listens on each node  in the cluster.
+        LoadBalancer: This works if your cluster is set up to work with a cloud provider. The service is exposed thru loadbalancer  that is created on the cloud platform.
+        ExternalName: This map the service to external address.

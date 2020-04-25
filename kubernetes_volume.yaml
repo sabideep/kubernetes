@@ -1,0 +1,54 @@
+######################
+Persistent Volume
+Volume Access Modes
+Persistent Volume Claims
+storage objects
+Applications with Persistent Storage
+###multicontainer pods
+
+
+
+****************  Persistent Volumes are used to create an abstraction layer between the application and the underlying storage,
+****************  making it easier for the storage to follow the pods as they are deleted, moved, and created within your Kubernetes cluster.
+
+
+Persistent Volumes: It allows to create storage that can be access beyond the liec of a pod.
+  Objecttype: PersistentVolume
+  Create a volume. Mount the pod to that volume.
+
+
+Volume Access Modes: You can define how PV can be access for Reading or Writing. whether by only one nodes or multiple nodes can mounted is defind by this.
+
+
+Persistent Volume Claims:
+  objectype: PersistentVolumeClaim
+  PVCs is used by developer to request storage for the application without knowing the underlying infrastructure from PV.
+
+
+
+#########################################################################
+***your storage is safe from data loss with the “Storage Object in Use Protection” feature,
+    which ensures any pods using a Persistent Volume will not lose the data on the volume as long as it is actively mounted
+
+
+
+Storage objects: Even if you delete the PVC and PV, you can still access data. (Volume already in use by pod ar protected agaisnt data loss)
+   objecttype: StorageClass : It will automatically provision storage so there is no need to create storage. You need to tell kubernetes what the provisioner is, it creates for you.
+
+Application with Persistent Storage:
+  --- Create StorageClass
+  --- Create PV Claims
+  --- PV will be created automatically
+  --- Create deployment yaml for deploymnet.
+        -- provide PersistentVolumeClaim: claimName
+
+multicontainer Pods: It is not good idea to have multiple container on single pods. You can create multi container pods by adding multiple conatiner in pod definition.
+How container communicate to each other:
+  1. shared Network: ALl listening ports are accessible to other containers within the same port. localhost can be used within the pod for containers.
+  2. shared storage volume: we can mount the same volume to multiple containers read from the same volume.
+  3. Shared process namespace: with process sharing enabled, the container in the same pod can itneract with other processes.
+
+  Design Pattern:
+    1. SideCar POD
+    2. Ambassador POD
+    3. Adapter POD

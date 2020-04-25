@@ -1,0 +1,33 @@
+#Kubernetes cluster
+Mater Node and Worker Node
+
+Master Node: Master node will not have pods to run the job.
+Components:
+1. API server: The communication hub for all cluster Components. It exposes Kubernetes API
+2. Scheduler: Assigns your app to worker node. Auto detect which pod to assign to which node based on resource requirements
+3. Controller manager: Maintains the cluster. handles Node failure, replicating components and mainting the correct number of pods.
+4. etcd: key value distributed Data store that stores the cluster configuration. Back
+
+
+Worker Node: Components
+1. kubelet: Runs and manages the container on the node and talks to API server
+2. kube-proxy: Load balances traffic between application components and exposes service to the external. It performs request forwarding to the correct pods/containers across cluster network
+3. container runtime: Program that run the container. Eg. docker, rocket(rkt) or containerd
+4. container:
+5. kubectl: commandline tool interacts with kube-apiserver and send commands to master node. The kubectl commandline tool can be used to create, delete, modify API objects
+
+Kubernetes CLuster: K8 can relocate the app component to any node sleemlessly.
+                   scaling, Loadbalancing, self healing will be handled by k8.
+
+
+apiVersion: v1
+kind: object definition
+Metadata: labels
+spec: this defined the desired state of objects
+
+
+service definition files
+deployment defination files
+kind: job
+ -- this object will creates and launches pods,
+ -- tracks the jobs and once completed, terminates the pods              

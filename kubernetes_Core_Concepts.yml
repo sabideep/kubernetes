@@ -1,0 +1,110 @@
+NameSpace:
+How it works:
+1. Once you describe the image that runs your application, the Scheduler in the master schedules the specified group of containers on to the node
+2. The kubelet instruct the container runtime to pull the images and run the container
+
+
+Kubernetes objects:
+###################################################################################################
+  1. Pods: It is the basic building blocks of any applications running in kubernetes. It consists of one/more containers
+  my-pod.yaml:
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: my-pod
+
+  Commands:
+    - kubectl create -f my-pod.yml .
+    - kubectl edit pod my-pod
+    - kubectl delete pod my-pod
+    - kubectl describe pod -n $namespace
+    - kubectl get pods -n $namespace
+
+###############################################################################################################
+  2. NameSpace:  Virtual cluster. Virtual separation between different environment. It provides way to keep your objects organized in the cluster.
+                 If no namespace is specified, the cluster assumes default.
+                 You can define namespace in metadata.
+#########################################################################################################
+Basic Container configuration:
+  command: it is run when the container runs or override the default commands
+  args: command  will run the args
+  ports:
+    - containerPort: To expose container port to cluster
+
+#############################################
+ConfigMaps: A kubernetes object that stores configuration data in key-value format.
+ConfigMap then can be referenced in pod spec for software running in container
+   apiVersion: v1
+   kind: ConfigMap
+#################################
+  4. Deployment: It provides declarative state for dynamically created set of pods.
+              --- You define desired state template and cluster will maintain desired state by
+              --- creating/removing  pods
+
+
+  5. Service: It creates abstraction layer that provide network access to dynamically created Pods.
+            -- it uses selector to define pods
+            port -- the port on which client will access service to
+            targetport -- traffic that will be forwarded to port in pods
+
+  2. Volume: storage inside the container is ephimeral.
+           -- with volume you can add external volume  for containers
+           --
+  3. Persistent Volume Claim:
+
+Kubernetese objects has spec and status:
+  Spec: You provide the spec. This defined the desired state of the objects
+  Status: This is provided by the cluster and contains information about the current state of the object
+
+
+Required fields: apiVersion, kind, metada,spec
+
+
+Pod Designing: Labels, selectors, Annotations
+
+
+######################################################################
+#logging and monitoring
+metrics-servers: It is an aggregator resource usuage data collector accross kubernetes cluster.
+                 It includes monitoring of CPU and memory utilization of pods in cluster.
+                 metric server exposes data via metric server API
+monitoring Application: You can insert liveness probes and readiness probes to do just this for custom monitoring of your applications
+    A Probe is a diagnostic performed periodically by the kubelet on a Container. To perform a diagnostic, the kubelet calls a Handler implemented by the Container. There are three types of handlers:
+livenessProbe: Indicates whether the conatiner is running, if it fails kubelet will restart the container
+
+ReadinessProbe: Indicates whether container is ready to serve request. If it fails, kubelet will remove pod from the service
+
+startupProbe: Indicates whether the applications within the container is restarted
+
+ExecAction: Executes a specified command inside the Container. The diagnostic is considered successful if the command exits with a status code of 0.
+
+TCPSocketAction: Performs a TCP check against the Container’s IP address on a specified port. The diagnostic is considered successful if the port is open.
+
+HTTPGetAction: Performs an HTTP Get request against the Container’s IP address on a specified port and path.
+               The diagnostic is considered successful if the response has a status code greater than or equal to 200 and less than 400.
+
+
+#####################################################
+Networking:
+  COmmunication between pods in same node as well as in other nodes:
+    eth0 -->veth -->bridge -->eth0 --Network --> bridge -->veth -->eth0
+
+  Container Network Interface:
+    It is a network overlay that goes on top of your network and build tunnel between nodes.
+    Flannel: it is a third party plugin.
+             Once CNi is installed, it install network agent on each nodes.
+             To use CNI, you need to notify kubelet: kubeadm init --pod-network-cidr=
+             CNI also takes care of IP address assignment to PODs.
+
+   Service Networking: when service is created, APi server will notify kube-proxy that service has been created.
+     with each service, an endpoint is created and kube-proxy updates the iptables rules
+     clusterIP: Internal routing of pods within the cluster
+     NodePort:
+
+
+  Ingress Rule and LoadBalancer: The loadbalancer redirects traffic to all the nodes and their nodePorts
+  Ingress: You can access multiple service with the same ingress IP.
+
+  CLusterDNS: COreDNS is the default DNS
+  DNS: servicename.namespace.baseDomainName --PodIp.namespace.BaseDomainName
+       DNS policy is default to cluster first

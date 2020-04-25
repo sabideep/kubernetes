@@ -1,0 +1,47 @@
+#####################
+Scheduler: It is responsible for assigning pods to nodes based on resource available
+why to modify the scheduler: ?
+ -- we can scheule all pods to same node to save cost
+ -- if the nodes are of different types, then certain pods should be scheduled to those nodes
+ 1. checks if hardware resource if fine
+ 2. checks if node has enough resources
+ 3. If pods is requested for specific nodes
+ 4. check for labels
+ 5. check for specific port
+ 6. checks for specific volume types
+ 7. if pods tolerate the taints of the nodes
+ 8. if pods define pods or node affinity
+labels: It is used to use label-selector to schedule pods to certain nodes based on labels
+
+
+Secrets: Sensitive information stored in kubernetes cluster such as password, token and keys
+         pass the secret during container runtime as env variable
+         object: Secret
+
+ServiceAccount: it allows container to talk to Kubernetes API with limited access.
+      spec: serviceAccountName
+
+
+
+Deployment, ROlling Updates and Rollback:
+  Rolling update will update the application with zero downtime.
+  change the image version and apply the new yaml file.
+  the deployment will create new replica set with new application will terminate the old replica set
+  we can pause/resume the deployment for canary deployment.
+
+  Rollback: rollout undo deployment feature will roll back to previous version
+
+High availablility and Scale:
+  ReadinessProbe: It ensures that no bad version available.
+                  It determines if the specific pods should receive client request or not.
+
+Passing COnfiguration options is thru env variables.
+You can store the COnfiguration in COnfigMaps and pass it to application as env variable.
+2 ways: secrets and COnfigMaps
+
+Self Healing Application:
+    ReplicaSet: It ensures that similar set of identically configured Pods are running at the desired replica Count.
+               Service Discovery, LoadBalancing, Scaling, Leader Election and Self Healing
+                In case of node failure, kubernetes wil migrate the pods to healthy node
+    StatefulSet: FOr the unique pods, we can use StatefulSet.
+                This will enusre that the pod is launched with its unique configuration.
